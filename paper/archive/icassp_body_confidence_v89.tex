@@ -1,0 +1,565 @@
+% v78 (2026-09-07). Author marks only: * equal contribution (Oh, Myung), dagger corresponding
+%   author (Park). No change to the body.
+% v77 (2026-09-07). Two independent mock reviews of v75 converged on one defect: the conclusion's
+%   policy recommendation did not match Tables 4 and 5. Reconstructing absolute accuracy shows
+%   omitting wins in all five cells, a numeric field beats a bare block in only one of four, and the
+%   block loses badly on AF3. Break-evens are policy-specific. Fixed here, with the selection limit.
+% v76 (2026-09-07). Adds Jaehong Myung (Artificial Intelligence, Sogang) as second author, per the
+%   author's instruction; no other change. Corresponding author is not marked in the PDF -- ICASSP
+%   handles it as the CMS form's contact author (set it to Unsang Park).
+% v75 (2026-09-07). Review round on v74 (two independent mock reviews). Verified defects fixed:
+%   probe-vs-sweep 0.3->0.5 pp with a sign flip, the field's 'smallest part' claim scoped to the
+%   margin, A_0 73.5 labelled as the passing order, Prior cell count, 'returns ... of it', Table 5
+%   pi* labelled bare. Space recovered from the alpha paragraph, which both reviews called overweighted.
+% v74 (branched 2026-09-06 23:25 KST from v73). From v73: E1 referent test (4 cells, preregistered 18:20 KST) -> one
+%   sentence in §8 (auto_e1.tex); trims: §8 floor-cell sentence, §9 future-work line; refs_v13 venue style.
+% v73 (2026-09-06). From v72: claim-step wording (Table 1), DEAF/Sicilia wording, strong-probe
+%   scope (3/4 prereg sign), direction-asymmetry sentence (post-hoc audit), GAMA citation,
+%   E3 swapped-order ladder in two cells (preregistered 13:19 KST; auto_e3.tex).
+% v6. Restructured around what the identification tests actually support.
+%   - the headline is now the claim/confidence separation and the claim-aligned contrast
+%   - alpha is reported as an observed quantity whose interpretation is NOT identified
+%   - the eligibility gate moves into the Protocol with the full cell flow and a sensitivity
+%   - the policy section is stated as a break-even precision, with its assumptions named
+%   - the backbone audit is in Limitations, because it is the real generalisation threat
+% v79 (2026-09-07). Third review round (two independent mock reviews of v78). Both raised the
+%   same two defects, and both are real: (a) SS7 reports a forwarding GAIN with the stronger probe
+%   while SS8 said the winning regime was untested and SS9 said omitting beat every policy --- the
+%   probe and the fusion result are both counterexamples, so the scope is now stated; (b) the one
+%   falsifiable prediction, pi*, was printed without any interval while the text claimed the sweep
+%   crossed "inside its bracket", a word the paper never defined. auto_v79.tex adds source-clustered
+%   intervals for pi* and for the observed crossing, drawn on a shared video resample so the paired
+%   gap is meaningful. Also: abstract now names the cell that fails the order audit; SS2 leads with
+%   the delta; the probe result gets its own run-in head.
+% v80 (2026-09-07). Fourth review round. Four VERIFIED reporting defects, all found by reading
+%   the generators rather than the prose:
+%   (1) Table 2's caption called `spread' the per-order high-low gap. gen_por_table_v1.py line 164
+%       computes abs(o[hi]-s[hi]), abs(o[lo]-s[lo]) -- the ACROSS-order range at each level. The
+%       wrong caption already led one reviewer to a false arithmetic complaint.
+%   (2) Table 3's caption printed a per-item s.d. POOLED over both answer orders, which carries the
+%       between-order mean gap; the interval is on the two-order average, so the two can never
+%       reconcile. Three separate reviews tried and failed. Now the within-order s.d. (0.16-1.26),
+%       emitted by the SAME generator that makes the interval. Bootstrap half-width is 0.94-1.38x
+%       the naive two-order value -- clustering widens it, as it should.
+%       Check: research_reports/20260907_v80/check_table3_ci_v1.py
+%   (3) "block does better in all four" -- EFourBlockMin is +0.0, a tie, not an improvement.
+%   (4) the conclusion's "not less than no field" -- numeric gains in 1 of 4 and ties 1.
+%   Also: the abstract no longer says "significant" for a comparison the Methods call descriptive,
+%   and no longer claims 0.02 agreement when the interval half-width is 0.03.
+% v81 (2026-09-07). Fifth review round. The headline item is a defect I INTRODUCED in v80:
+%   the abstract's new scope sentence read "every admitted reader is more accurate than the
+%   detector, SO the question is not whether forwarding loses". That entailment is false, and this
+%   paper contains its own counterexample -- score-level fusion of the SAME 74.8% detector gains
+%   +2.1 points on an 81.5% reader. Relative accuracy does not decide the sign; text forwarding
+%   does. The abstract now states the regime without deriving the loss from it, which also stops
+%   it contradicting v80's own conclusion ("and on where their errors coincide").
+%   Also: Table 5's half-width is now attributed to pi* at a stated level, the body quotes the
+%   PAIRED gap interval (one interval, not two), and the abstract calls AF3 what it is -- null.
+% v82 (2026-09-07). Sixth round, run as a FULL audit of both reviews rather than a pick of the
+%   loudest items -- the previous rounds had triaged, not enumerated. Four verified clarity
+%   defects, all cheap:
+%   (a) SS7 used "4" for order-robust cascade cells and "5" for all of them with no signpost, and
+%       the sound-event sentence used the 4. All five cascade rows ARE sound, so it now says five
+%       and every 4 in SS7 means order-robust.
+%   (b) the ceiling count (5 of 10 headline cells) was recoverable only by counting superscripts
+%       in Table 3; it is now stated where ceiling is defined.
+%   (c) model scale was never bounded anywhere -- all six readers are open and <=30B.
+%   (d) the VideoLLaMA withdrawal read as a post-hoc judgement; it is a consequence of the
+%       order-robustness rule, which is what the text now says.
+% v83 (2026-09-07). Audited every "N of M" in the rendered PDF, which is the concrete form of
+%   the reviews' loudest complaint (the denominator changes sentence to sentence). Sixteen
+%   occurrences; five carried no identifying noun, and ONE OF THOSE WAS WRONG: the repair-seed
+%   sentence said "7 of 8 cells" when SeedTotCells counts 2 seeds x 4 cells, i.e. cell-seed
+%   pairs -- there are only four cascade cells. Fixed, and the other four are now named.
+%   Also: the oracle gate's threshold is tuned on the test set (an upper bound, which makes the
+%   negative result STRONGER) and never said so; and Metric-X appeared only as a table header.
+% v84 (2026-09-07). Seventh pass, this one a fresh read of the whole paper rather than a reply to
+%   a review. Found and fixed, in order of severity:
+%   - HAND-TYPED RESULT COUNTS duplicating macros, the exact rot this project guards against:
+%     "All five are predicted to lose", "the four order-robust rows", "Holm over the four",
+%     "in all four", "twelve VGGSound classes", "the three worst-separated classes", and
+%     Nemotron's "0.890" knife-edge (Table 5 prints 0.89). All now macro-driven, each with a
+%     noun beside it so the digit reads as a count.
+%   - A FORWARD REFERENCE: "pi* is approximate, and low by that margin" -- the margin is only
+%     defined a paragraph later. Removed; the direction is stated where the gap is given.
+%   - "several times further" for a 2.1x floor. Now "two to four times".
+%   - Bare denominators missed by the v83 sweep: "covers zero in all 4" -> "...4 cells".
+%   - "shows a generic ... effect is insufficient" -> "shows that a ...".
+%   - Table 1's rows called "cells" in one clause and "rows" in the next.
+%   NOTE: releases/.../icassp_v83.* is a mid-round snapshot; the v83 source kept changing after
+%   it was packed. v84 is the version to submit.
+% v85 (2026-09-07). Ninth pass. Three findings, none of which any review had raised:
+%   - TABLE 2 CARRIED A \label AND NO \ref. The override table was never cited anywhere in the
+%     body, which IEEE style disallows and which left a whole table undiscussed. Now cited from
+%     the POR sentence in SS6, chosen so the tables are still met in numerical order (citing it
+%     from SS3's Metrics, the first place tried, put Table 2 ahead of Table 1).
+%   - "the declared field is the smallest part" was FALSE: recomputed from Table 1's own rows,
+%     |+conf| is the smallest ladder step in 1 of 7 rows; the +src rung is smaller in 6. What is
+%     verified is conf as a fraction of the claim step (4.7-44.2%), which is what it now says.
+%   - "the three epistemic names track each other" is not supported: the trio spreads up to 2.85x
+%     within a row, and in 2 of 7 rows a non-epistemic field exceeds an epistemic one. Dropped;
+%     the sentence now also says what the non-epistemic share is a fraction OF, never stated before.
+%   Verified clean this pass: all 37 citations numbered in order of first appearance, none
+%   orphaned; hyphenation variants are correct compound-adjective usage; Fig. 1's caption numbers
+%   (308-382, 400-n, 19/18) reconcile with Table 2's |C| column.
+% v88 (2026-09-07). PDF-technical audit, an axis never checked before.
+%   pdffonts showed DejaVuSerif and DejaVuSans-Oblique embedded alongside the paper's Nimbus
+%   Roman: matplotlib's defaults, so Figure 1's text and its beta were in a different face from
+%   the body. The kit asks for Times-Roman "to give the proceedings a more uniform look".
+%   Rebuilt with STIXGeneral + mathtext.fontset=stix (the Times-metric pair matplotlib ships).
+%   Natural width 251.6pt -> scaled 0.973 -> smallest glyph 9.24pt, still clear of the 9pt floor.
+%   Verified clean the same pass: page size 612x792 (US Letter), every font embedded and subset,
+%   PDF 1.5, not encrypted, no page rotation.
+\newcommand{\tbd}[1]{\textbf{[#1]}}
+\input{auto_numbers}
+\input{auto_cascade}
+\input{auto_por}
+\input{auto_swing}
+\input{auto_all}
+\input{auto_pack}
+\input{auto_packcol}
+\input{auto_kill}
+\input{auto_kill2}
+\input{auto_packcomp}
+\input{auto_sets}
+\input{auto_ledger}
+\input{auto_prior}
+\input{auto_clean}
+\input{auto_sel}
+\input{auto_sweep}
+\input{auto_seeds}
+\input{auto_strong}
+\input{auto_fusion}
+\input{auto_detfam}
+\input{auto_holm}
+\input{auto_label}
+\input{auto_gap}
+\input{auto_v73}
+\input{auto_e3}
+\input{auto_e1}
+\input{auto_v75}
+\input{auto_v77}
+\input{auto_e4}
+\input{auto_v79}
+\input{auto_v81}
+
+\title{What an Upstream Sound-Event Tag Costs, and Which Part of It:
+Claim, Packaging, and Declared Confidence}
+
+\maketitle
+
+\begin{abstract}
+An upstream sound-event tagger's decision usually enters a multimodal model's prompt as a
+sentence. It carries three things at once: the claim, its packaging, and the declared confidence.
+Prior work leaves them unseparated. We separate them, holding the
+signal and the claim wording fixed, across six models, then through a real CLAP
+cascade. The claim does most of the damage: forwarding the detector's decision costs accuracy in
+every cascade cell that survives an answer-order audit, and not reliably in the fifth. Naming the
+field Confidence rather than Priority moves the model two to four times further toward the claim,
+and the swing survives where a shift common to true and false claims would leave none; on accuracy it is
+smaller, clearing zero in half the order-robust cells. Packaging governs how much lands. Every
+admitted reader beats the detector, so we locate where forwarding starts to pay: a per-model
+break-even agrees with the measured crossing.
+\end{abstract}
+
+\begin{keywords}
+Sound Event Detection, Decision Fusion, Audio--Visual Language Models, Evidence Conflict, Cascaded Systems
+\end{keywords}
+
+\section{Introduction}
+\label{sec:intro}
+
+A practical audio--visual system rarely consists of one model. A sound-event tagger runs
+first, its output is written into a prompt~\cite{ghosh2024gama}, and a multimodal model reads that text together with
+the audio and video. That interface is plain language, and it carries not only a claim but an
+assertion of how strongly the upstream stage believes it.
+
+Studies of this failure mode vary the claim and its framing
+together, measuring a confident assertion as a whole. A designer, though, chooses whether to
+forward the tag at all and, if so, how to serialise the claim and its confidence. Those are
+separate levers, and answering which one to pull requires moving them one at a time.
+
+Our contributions are:
+\begin{itemize}\itemsep2pt
+\item A decomposition of the upstream message into claim, format
+and declared confidence, each held fixed against the others and reported at the grade its
+design supports: inserting the claim and replacing the field name are single-factor, while the
+format is a bundle of source, framing and length, so its damping is measured rather than
+attributed. The setup rungs are descriptive. All on a held-out set never used for
+exploration.
+\item A test of the claim-aligned contrast against a restricted common-shift account, which
+cancels in $\beta$ by construction and predicts no swing on items the model answers
+incorrectly unaided; the swing persists there. The symmetric term reverses sign, as
+shrinkage predicts, and is reported as \mbox{unidentified}.
+\item A measurement of what each part costs in a real cascade:
+which one dominates, which one is reliable only on the margin, and which one governs how much of
+either lands. We report a per-model break-even that an error-repair sweep tracks, with the
+eligibility flow and a backbone audit.
+\end{itemize}
+
+\section{Relation to prior work}
+\label{sec:related}
+
+Evidence--text conflict appears as sycophancy in text-only models, as image--text conflict in
+vision--language models~\cite{liu2025vlmcognitive}, and in audio--visual models as hallucination
+benchmarks~\cite{kim2024avhbench,chen2026avid,wang2026avibench}, decoding-time
+corrections~\cite{leng2024vcd,jung2025avcd,gacl2026} and counterfactual audits of whether
+acoustic evidence is used at
+all~\cite{miller2026paralinguistic,singh2024counterfactualav,chen2025listen,alme2026,wang2025mcrbench,dong2026omnihallucl}.
+
+To our knowledge no prior study separates the declared confidence from a matched
+non-epistemic field on a byte-identical claim, or prices the result against a real detector's operating accuracy.
+Video-LLM sycophancy benchmarks vary the misleading text as
+a whole~\cite{zhou2025flattery,tang2026spatiotemporal}; authority-bias work grades
+the endorser~\cite{mammen2026endorsed,joswin2026mechanistic} --- our Source factor; \cite{cao2026caved} fixes the claim and intervenes on the video. In audio, SYAUDIO~\cite{yao2026syaudio} grades assertion strength by rewording the whole
+assertion and DEAF~\cite{xiong2026deaf} grades levels of textual override with the framing
+fixed; in text, epistemic markers already shift accuracy~\cite{zhou2023navigating},
+\cite{sicilia2025sycophancy} crosses a suggestion's correctness with its stated sureness, \cite{guo2026conformity}
+separates conformity from uncertainty, and \cite{lin2022teaching,tian2023just}
+calibrate a model's own verbalised uncertainty --- ours is the upstream stage's. We do both, on a
+logit margin and on a real cascade.
+
+\section{Protocol}
+\label{sec:protocol}
+
+\noindent\textbf{Attributes.} Sound event: $\LabelClassN$ VGGSound~\cite{chen2020vggsound} classes; negatives ask about another of the
+$\LabelClassN$, keeping distractors comparable in kind. Colour asks whether the clip is greyscale, noise whether a steady hiss covers it, silence whether a 1.5\,s mid-clip gap is muted; all three are constructed.  CLAP's calibrated
+$P(\text{present})$ separates $\LabelStrongN$ of $\LabelClassN$ classes by
+$\LabelStrongMin$--$\LabelStrongMax$, but only $\LabelWeakMin$--$\LabelWeakMax$ for the
+$\LabelWeakN$ eating and sneezing ones. The declared-confidence ladder is monotone in all $\LabelMonoCells$ sound cells
+with those classes in or out; nothing rests on the exclusion.
+
+\begin{sloppypar}
+\noindent\textbf{The message and its controls.} Metadata precedes the question, verbatim as
+{\ttfamily\small Source: anonymous system / Claim: ``The clip does not contain the sound of
+X.'' / Confidence: high}, followed by {\ttfamily\small Does this clip contain the sound of
+X? (A) Yes (B) No}. 
+\end{sloppypar}
+\vspace{1pt}
+{\centering\ttfamily\small
+\begin{tabular}{@{}llll@{}}
+\rmfamily condition & \rmfamily Source & \rmfamily Claim & \rmfamily third field\\[1pt]
+\rmfamily signal only    & --      & --    & --\\
+\rmfamily empty block    & ---     & ""    & Confidence: ---\\
+\rmfamily source-only & anon & "" & Priority: $c$\\
+\rmfamily non-epistemic  & anon    & "F"  & Priority: $c$\\
+\rmfamily declared conf. & anon    & "F"  & Confidence: $c$\\
+\end{tabular}\par}
+\vspace{1pt}
+\noindent The two contrasts the paper rests on are single-factor: source-only and non-epistemic differ in
+the claim alone, non-epistemic and declared confidence in the field's name alone. The
+setup rungs above them are not, and we do not read them causally. The ladder runs
+very low to very high, with a numeric scale ($0.15/0.35/0.60/0.85/0.95$) as a second, and
+the claim sentence is byte-identical across every claim-bearing condition.
+
+\noindent\textbf{Perceptual-eligibility gate.} Fixed before any metadata condition was
+scored, and evaluated on the
+no-metadata pass only --- no condition containing metadata is read before a cell is
+admitted. A cell is admitted when both-direction recall $\ge0.60$ and
+unaided accuracy $A_0\ge0.60$; below that the model cannot judge the property; failing
+recall means ``correct'' is position. A cell is one (model, attribute) pair. Cells with $A_0>0.95$ are ceiling: accuracy has no headroom
+there, the margin does. Of $\GateRunN$ cells run, $\GateFloorN$ floor,
+$\GateRecallN$ fail recall, $\GateCeilN$ are ceiling and $\GateEligN$ eligible; those
+$\GateEligN{+}\GateCeilN$ admissible ones plus $\GateExtraSwapN$ kept for the position audit were
+rerun in the swapped order, and $\BothOrderN$ passed both (order-robust) --- $\BothOrderN$ headline, $\BetaPrimN$
+ladder, $\FullFieldN$ field-name and $\CasPrimN$ cascade cells, the narrower sets following from
+what each cell was run on, not what it showed; $\CeilHeadN$ of the $\LedgerTotN$ headline cells hit ceiling in at least one order. No cell is selected out of the headline contrast. Two cases are
+reported separately: Audio Flamingo 3/sound carries the contrast but fails the swapped gate, and
+silence, which on Qwen2.5 and Qwen3 passes the first order and floors under the swap.
+
+\noindent\textbf{Scoring.} One forward pass; the answer is the larger of the two option-letter
+logits, so decoding is deterministic; free-form generation is not tested. We study
+Qwen2.5-Omni-7B~\cite{qwen25omni}, Qwen3-\-Omni-\-30B-\-A3B~\cite{qwen3omni},
+Video\-LLaMA2.1-\-7B-\-AV~\cite{cheng2024videollama2}, Qwen2-Audio-7B~\cite{qwen2audio} and Audio Flamingo~3~\cite{af3}. We add Nemotron~3 Nano Omni
+(BF16, reasoning disabled)~\cite{nvidia2026nemotronomni}, whose Mamba2-\-Trans\-former LLM, Parakeet speech encoder and C-RADIO vision tower differ from all five. Phi-4-multi\-modal~\cite{phi4mm} was screened and excluded for answering by option position: on the same $\PhiScreenN$ clips it is right $\PhiRecA\%$ when the answer is (A) and $\PhiRecB\%$ when it is (B).
+
+
+
+\noindent\textbf{Metrics.} POR is the probability of following the false claim among items
+answered correctly unaided, macro-averaged over the two claim directions. The truth-aligned
+margin is $m=\log p(\text{correct})-\log p(\text{incorrect})$, the log-likelihood ratio
+between the two answers. Writing $\Delta_{\text{true}}$
+and $\Delta_{\text{false}}$ for the margin change from the signal-only prompt under a true and a false claim at level $c$,
+we report the symmetric and claim-aligned contrasts
+\[
+\alpha_c=\tfrac{1}{2}(\Delta_{\text{true}}+\Delta_{\text{false}}),\qquad
+\beta_c=\tfrac{1}{2}(\Delta_{\text{true}}-\Delta_{\text{false}}).
+\]
+This is an exact re-parameterisation of two measurements into two numbers, not a testable
+model, and we do not read the two terms as separate mechanisms. Intervals are bootstrapped over
+source videos; paired conditions use an exact McNemar test with Holm
+correction over the $K{=}\PorK$ prespecified per-order confidence contrasts and, separately,
+the $\HolmBareCells$ bare-cascade cells; comparisons outside those two families are descriptive.
+
+\section{What each part of the message costs}
+\label{sec:sep}
+
+Inserting the claim is the largest step in Table~\ref{tab:steps}'s walk from the signal-only
+prompt to a confident false claim ($-\ClaimMin$ to $-\ClaimMax$ log-odds), over twice the next
+in $\ClaimTwiceN$ of the $\StepCells$ rows; the declared confidence adds $-\ConfHighMin$ to $-\ConfHighMax$ at
+high, $\ConfShareMin$--$\ConfShareMax\%$ of it.
+
+At low the same increment is positive in all
+$\ConfLowPrimN$ ladder cells ($+\ConfLowPrimMin$ to $+\ConfLowPrimMax$): weak confidence pushes the answer back toward the signal.
+
+The non-epistemic field also carries a true claim, so the claim-aligned contrast is defined for it too. Between high and low it
+swings by $\SwingConfMin$--$\SwingConfMax$ log-odds under Confidence but only
+$\SwingPrioMin$--$\SwingPrioMax$ under Priority. Paired on the same items and averaged over both
+answer orders, the difference is $\SwingPrimDiffMin$--$\SwingPrimDiffMax$ log-odds over all
+$\SwingPrimCells$ headline cells, every bootstrap interval excluding zero, a ratio of
+$\SwingPrimRatioMin$--$\SwingPrimRatioMax\times$ that stays tightly
+bounded despite a five-fold spread in absolute size.
+
+\begin{table*}[t]
+\caption{Margin contrasts (log-odds) at high on unaided-correct
+items, order-averaged. Left, each rung's step from the one above (descriptive). Right, a different quantity --- each field's own $m_{\mathrm{high}}{-}m_{\mathrm{low}}$ swing on the false-claim block --- so the halves are not subtractable. $^{s}$: sensitivity.}
+\label{tab:steps}
+\centering\small
+\setlength{\tabcolsep}{2.0pt}
+\begin{tabular}{l rrrr c rrrr c rrr}
+\toprule
+ & \multicolumn{4}{c}{one-step contrasts} & & \multicolumn{4}{c}{epistemic} & &
+\multicolumn{3}{c}{non-epistemic} \\
+\cmidrule(lr){2-5}\cmidrule(lr){7-10}\cmidrule(l){12-14}
+model & block & $+$src & $+$claim & $+$conf. & &
+Conf. & Reliab. & Certain. & Prior & & Priority & Urgency & Metric-X \\
+\midrule
+\TabMerged
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\noindent\textbf{Epistemic content, not a graded word.} If the swing came from the words high/low rather than from what
+the field asserts, a non-epistemic field with the same words would reproduce it. It does not: the right half of Table~\ref{tab:steps} sets the field names side by
+side. The non-epistemic names (Priority, Urgency,
+Metric-X) recover $\NonEpShareMin$--$\NonEpShareMax\%$ of the Confidence contrast, under half in $\NonEpHalfN$ of the $\NonEpShareN$ cell--field pairs. A field could still matter by carrying meaning alone; Prior tests
+that: epistemic vocabulary, same block and graded value, but about the class base rate, not
+this clip. It reaches $\PriorShareMed\%$ of the Confidence contrast (median over $\PriorCells$ cells; Table~\ref{tab:steps} lists seven), is smaller in all $\PriorSmallerN$ and nearer the
+non-epistemic side in $\PriorLikeNonN$. Nor is it acting where $\beta$ cancels: a base-rate
+field should push toward presence on both branches, but its presence-aligned shift does so in
+only $\PresPriorPosN$ of $\PresCells$ cells (mean $\PresPrior$ against Confidence's $\PresConf$). The content has to be about the claim.
+
+
+\section{The claim-aligned contrast, and what is not identified}
+\label{sec:decomp}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=\linewidth]{fig1_decomp_v11.pdf}
+\caption{$\beta$ against declared confidence, on unaided-correct items (left) and their
+complement (right); curves use the first order, with left-panel $n$ of 308--382 per model; the right panel holds the $400{-}n$ complement (ceiling cells: 19/18). A common-shift account predicts no
+swing in the right panel; the swing persists.}
+\label{fig:decomp}
+\end{figure}
+
+$\beta$ rises monotonically with declared confidence in every one of the $\BetaPrimN$
+ladder cells and in Audio Flamingo~3, reaching $+\BetaTopMin$ to
+$+\BetaTopMax$ at the top rung. On Nemotron, Qwen2-Audio
+and Qwen3/noise the ladder starts below zero, so a claim declared at very low is not
+merely discounted but read as evidence against itself. The response is also damped: on the numeric scale, where the
+value is explicit, $\beta$ is close to linear in $\mathrm{logit}(c)$ ($R^2\ge\RsqMin$) with slope
+$\SlopeMin$--$\SlopeMax$, where a calibrated independent sensor taken at face value would give one.
+
+\noindent\textbf{The test $\beta$ has to pass.} Conditioning on unaided-correct items makes
+their margin positive by construction, so output shrinkage mimics the same signs. The null we test is restricted: a confidence term common to both branches cancels exactly in $\beta$ and predicts no swing on the complement. The swing persists under the prespecified first order (Fig.~\ref{fig:decomp}, right) and, in the two cells rerun in the swapped order (Qwen2-Audio, Nemotron/sound), there too:
+the complement's top-minus-bottom swing is $\EThreeSwingQTwoA$ and $\EThreeSwingNemo$ log-odds, both
+intervals above zero and the latter larger than in the first order. Rescaling common to both branches is not excluded
+by this test; the Priority control shows that a
+generic graded-value effect is insufficient.
+
+ The symmetric term $\alpha$ fails the same test --- refit on unaided-incorrect items it reverses
+sign in $\AlphaPrimFlipN$ of $\AlphaPrimTotN$ ladder cells, as shrinkage predicts --- so we report it
+as observed, not identified.
+
+\begin{table}[tb]
+\caption{Override rate (macro-POR, \%) under high vs.\ low declared confidence. $|C|$ counts items answered correctly unaided, per order; spread is the across-order range at high/at low. $p$ is the exact McNemar of the worse order, raw; Holm over the $K{=}\PorK$ prespecified per-order comparisons rejects $\PorRejN$.}
+\label{tab:conf}
+\centering\small
+\setlength{\tabcolsep}{1.9pt}
+\begin{tabular}{llrrrrl}
+\toprule
+model & cell & $|C|$ & high & low & spread & $p$ \\
+\midrule
+\TabPOR
+\midrule
+\multicolumn{7}{l}{fails admission in one order --- sensitivity only}\\
+\TabPORsens
+\bottomrule
+\end{tabular}\\[2pt]
+{\small $N{=}400$/order; $A_0{=}|C|/400$. $^{c}$ceiling $>0.95$ ($\text{-}1$/$\text{-}2$: first/swapped order). Cells without POR headroom are not rows.}
+\end{table}
+
+\section{Ablations}
+\label{sec:robust}
+
+Withholding the clip raises the contrast in $\MaskRiseN$ of $\MaskTotN$ masked cells, and outside the gate
+$\beta$ runs $\FloorMin$--$\FloorMax$, above the admitted maximum at high ($\EligMax$) in
+$\FloorAboveN$ of $\FloorN$ floor cells: alignment is strongest where perception is weakest. A reworded question keeps the POR gap on the two Qwen sound cells ($\ParaMin$--$\ParaMax$\,pp).
+
+\begin{table}[tb]
+\caption{The $\LedgerTotN$ headline cells and the Audio Flamingo~3 sensitivity row. $A_0$ is unaided accuracy, order-averaged; $\beta_{\mathrm{C}}$/$\beta_{\mathrm{P}}$ are the high-minus-low swings of $\beta$ under Confidence and Priority (log-odds), $\Delta$ their order-averaged paired difference with a source-clustered $95\%$ interval (393--399 videos, $2000$ replicates; within-order per-item s.d.\ $\DeltaSdWMin$--$\DeltaSdWMax$). $^{c}$: an order exceeds $0.95$. $^{s}$: sensitivity. g4: strongest graded-noise level.}
+\label{tab:ledger}
+\centering\small
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}llrrrl@{}}
+\toprule
+model & attribute & $A_0$ & $\beta_{\mathrm{C}}$ & $\beta_{\mathrm{P}}$ & $\Delta$ [$95\%$ CI] \\
+\midrule
+\HeadRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Which cells these are.} The audio claim rests on $\LedgerSoundN$ sound-event cells (Table~\ref{tab:ledger}); the other
+$\LedgerColourN$ colour and $\LedgerNoiseN$ noise cells make the field effect a property of the
+interface, not of one attribute.
+
+\noindent\textbf{Answer-option order.} Inverting the options keeps sign and one-sidedness but not magnitude --- Qwen3/noise's largest gap
+moves $\OrdGapO\to\OrdGapS$ --- so all both-order numbers are order-averaged. VideoLLaMA2.1's unaided sound accuracy falls to chance
+($\VLSwapAcc$) under the swap, so those cells fail the gate there and are not reported.
+
+\section{The decomposition on a real cascade}
+\label{sec:policy}
+
+\begin{table*}[t]
+\caption{A real cascade, order-averaged.
+CLAP~\cite{clap2023} tags each clip and its decision becomes the claim. $\pi^{\star}$ is the in-block break-even. Brackets are source-clustered $95\%$ intervals; the in-block ones (not shown) also exclude zero. $^{s}$: sensitivity.}
+\label{tab:cascade}
+\centering\small
+\setlength{\tabcolsep}{2.1pt}
+\begin{tabular}{lr rl rrr r}
+\toprule
+ & & \multicolumn{3}{c}{forward claim ($\Delta$ omit, pp)}
+& \multicolumn{2}{c}{field ($\Delta$ block, pp)} & \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}
+model & omit (\%) & \multicolumn{2}{c}{bare} & in block & verbal & numeric & $\pi^{\star}$ \\
+\midrule
+\TabCascade
+\bottomrule
+\end{tabular}
+\end{table*}
+
+CLAP (clap-htsat-unfused) scores each clip against the query class verbatim, unlike fixed-vocabulary taggers~\cite{gong2021ast}. Its threshold
+and band precisions are cross-fitted over a five-fold split of the source videos, and everything
+below is pooled over the five held-out folds, reaching $\DetAcc\%$ (per-fold s.d.\ $\DetFoldSD$).
+
+\noindent\textbf{What the detector declares needs defining.} CLAP's score measures similarity to the positive phrasing and its threshold is not at $0.5$, so
+$\max(s,1-s)$ is confidence about presence, not about the decision --- on a third of clips the opposite
+of the claim sent. We fit $p=P(y{=}1\mid s)$ by isotonic regression and declare $q=p$ or $1-p$ by the
+decision; the bands (training-fold quintiles of $q$) then rise out-of-fold ($\BandMin$--$\BandMax\%$),
+as do the second checkpoint's. All $\CasNumCells$ cascade cells are sound events.
+
+\noindent\textbf{Forwarding loses, and the branch arithmetic says why.} A true claim
+repairs only items already wrong, so its gain is capped by $1-A_0$; a false one is capped by
+$A_0$, and mixing at claim correctness $\pi$ gives
+$\pi^{\star}=-G_{\text{false}}/(G_{\text{true}}-G_{\text{false}})$. On branches matching the
+claim-only policy a true claim already costs $\CasTrueCostMin$--$\CasTrueCostMax$ points
+in $\CasNoBreakEven$ of $\CasNumCells$ cells, leaving no $\pi^{\star}$. All $\CasNumCells$ cascade cells are predicted to lose; the $\CasPrimN$ order-robust rows do, by $\CasLossMinP$--$\CasLossMaxP$ points, and Audio Flamingo~3 most of all (Table~\ref{tab:cascade}).
+Mixing linearly assumes claim errors independent of item difficulty; they are not, so $\pi^{\star}$ is
+approximate; the measured column is what the recommendation rests on. The bare column sends the detector's actual decisions: it costs $\KillMin$--$\KillMax$ points in
+every order-robust cell (in direction only on Audio Flamingo~3), and $\KillMinB$--$\KillMaxB$ on the second
+checkpoint (larger\_clap\_general), whose per-cell intervals all exclude zero. Qwen2-Audio as detector (its no-metadata answer, thresholded and cross-fitted like CLAP's, a different family at $\FamAcc\%$ out-of-fold) costs $\FamMin$--$\FamMax$ points in $\FamNegN$ of $\FamCells$
+cells: the loss is not specific to CLAP. Holm over the $\HolmBareCells$ bare-cascade cells leaves all below $0.05$
+(largest adjusted $p=\HolmBareMax$). It is also direction-asymmetric (post hoc): of the detector's $\DetFNn$ false absences and
+$\DetFPn$ false presences, absence carries $\DirFNShareMin$--$\DirFNShareMax\%$ of the false-claim loss.
+
+\begin{table}[b]
+\caption{Error-repair sweep: accuracy change of bare forwarding vs.\ omitting at each target $\pi$. $\pi^{\star}$ is the bare-sentence break-even (Table~\ref{tab:cascade}'s is in-block); its source-clustered $95\%$ half-width is $\PiHalfMax$; crossings are interpolated between columns.}
+\label{tab:sweep}
+\centering\small
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+model & $.748$ & $.80$ & $.85$ & $.90$ & $.95$ & $1.0$ & $\pi^{\star}$ \\
+\midrule
+\SweepRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{The break-even predicts the crossover, and a stronger detector crosses it.} One seeded subset of the detector's errors is corrected
+per fold (the rest are its own); the endpoints are the real run and the wholly
+true claim. The loss rises
+monotonically and crosses zero $\CrossGapMinPP$--$\CrossGapMaxPP$\,pp above the predicted bare
+$\pi^{\star}$, a paired gap whose interval covers zero in all $\GapZeroN$ cells
+(Table~\ref{tab:sweep}). Two further repair seeds put the crossing in the same grid interval in $\SeedAgreeCells$ of $\SeedTotCells$ cell--seed pairs. A stronger probe (an $L_2$ logistic on both checkpoints'
+embeddings and similarities, cross-fitted on the same source folds;
+$\StrongAcc$ out-of-fold) lands on the same line: $\StrongQTwoA$ on
+Qwen2-Audio ($[\StrongQTwoALo,\StrongQTwoAHi]$), $\StrongQTwoFive$/$\StrongQThree$ where
+$\pi^{\star}$ exceeds it, $\StrongNemo$ [$\StrongNemoLo$, $\StrongNemoHi$] at Nemotron's
+knife-edge, where the preregistered sign was positive --- each within $\ProbeSweepMax$\,pp of the
+sweep's $\pi{=}0.90$ column. Qwen2-Audio's cascade then reads $\ProbeCascAcc\%$ against the probe's own $\ProbeAcc\%$: the gain is
+over the reader, not the detector.
+Score-level fusion~\cite{kittler1998combining} of the reader's margin and the detector's decision
+gains at most $\FuseGainMax$ points, on the weakest reader only, and causes no comparable degradation.
+
+\looseness=-1
+\noindent\textbf{Packaging damps the claim rather than reversing it.} The claim moves the model
+less inside a Source/Claim block than as the same bare sentence. The gap
+between a true and a false claim shrinks to $\PackPrimMin$--$\PackPrimMax\%$ of the bare span (median
+$\PackPrimMed\%$) in all $\PackPrimBelowN$ cascade cells, with every interval below $100\%$;
+Audio Flamingo~3 gives $\PackMin\%$. Both directions shrink; on Qwen2.5 the span contracts while both policies cost the same. The damping is the block's: a true claim moved into it costs $\FrameMin$--$\FrameMax$ points in all
+$\PackCompN$ cascade cells, of which Confidence returns $\FieldMin$--$\FieldMax$, clearing zero in $\FieldPosN$.
+On colour it is $\PackColMin$--$\PackColMax\%$: the damping recurs beyond audio. The exception is Audio Flamingo 3, which fails the order gate: there the block costs $\AFBlockGap$
+points more than the bare sentence, so the recommendation is for order-robust readers.  The numeric field damps too: written as the band's training-fold precision at the same declared
+level, it compresses the response
+to $\CompressPrimMin$--$\CompressPrimMax\%$ of the verbal slope (median $\CompressPrimMed\%$) in all
+$\CompressPrimN$ cells, and costs $\CasNumGainMin$--$\CasNumGainMax$ points less than the word in every cell of both
+detectors. Against a block with no field the numeric field gains in $\NumOverBlockN$ of $\NumBlockCells$ cells and loses in
+$\NumUnderBlockN$.
+
+\begin{sloppypar}
+\noindent\textbf{A prompt caveat is not the lever.} Appending ``{\ttfamily\small This tag may be wrong; judge
+from the recording itself.}'' to the bare sentence helps in $\EFourWarnPosN$ of $\EFourCells$
+cells, hurts in another, and all $\EFourStillLossN$ still trail omitting, while the block
+matches or beats the bare sentence in all $\EFourCells$ cells ($\EFourBlockMin$ to $\EFourBlockMax$); an oracle
+confidence gate, its threshold swept on the test set, gains $\le\SelGainMax$ points (descriptive).
+\end{sloppypar}
+
+\looseness=-1
+\noindent\textbf{What the field moves.} On the margin the declared field costs a fraction of the claim's step and is the
+most reliable: its swing beats the control in every cell. On accuracy it costs $\ConfAccMin$--$\ConfAccMax$ points, clears zero in $\ConfAccSigN$ of $\ConfAccCells$ cascade
+cells, and on \FieldOverClaimCell{} exceeds the in-block claim ($\FieldOverClaimVal$ against $\FieldOverClaimRef$). The field is where the effect shows; the format is where the leverage is.
+
+\section{Limitations}
+\label{sec:limits}
+
+\looseness=-1
+All six readers are open and ${\le}30$B; the first five share a Qwen text backbone, and Nemotron shares none of the three components yet reproduces the contrast. All cells come from a single corpus, and every admitted one reads more accurately than CLAP. Both detectors are audio-only and their errors track item difficulty (\S\ref{sec:policy}); one whose errors fall elsewhere was not run. The rule admits from $A_0\ge0.60$ but
+admitted cells start at $\AdmitMinAZero$, so the cost is measured where the reader is strong and the
+break-even highest; the cells below it failed order-robustness
+(\BelowDetCell{}: $\BelowDetA$ in the order it passed). The stronger probe
+inverts that ranking on one reader, where forwarding wins; whether that holds elsewhere is
+untested.  A blind pass over $\AuditN$ clips of the $\LabelWeakN$ worst-separated classes agrees with VGG\-Sound on
+$\AuditAgree\%$ of the $\AuditScoredN$ it judged; dropping the $\AuditDisN$ disagreements and
+$\AuditUnsN$ unsure clips leaves the bare loss at $\CleanMin$--$\CleanMax$. Relabelling the field Reader or Detector confidence shrinks the swing by
+$\EOneShrinkMin$--$\EOneShrinkMax$ log-odds but it still beats Priority in all $\EOneCells$ cells.
+
+\section{Conclusion}
+\looseness=-1
+Break-evens depend on how the tag is written. Every
+bare-sentence threshold we measured exceeds this detector's accuracy, and the in-block ones differ from those, so
+clearing a threshold under one serialisation does not license another. Against this detector,
+omitting beat every text-forwarding policy we tested. A probe that outranks the reader reverses that
+on one cell, so the choice turns on the two stages' relative accuracy and on where their errors
+coincide. When a claim must go, the block is the lever, not a caveat; a numeric
+field costs less than the verbal band but is not consistently better than no field. Free-form answers and blocks carrying more than one tag remain untested.
+
+\clearpage
+
+% Page 5 may carry exactly three things and nothing else, per the live ICASSP 2027 paper kit:
+% "one additional optional 5th page containing only references, funding acknowledgements, and a
+% Compliance with Ethical Standards statement". (The kit's downloaded Template.tex still says
+% "only references to the prior literature" -- that file is the ICASSP-2026 template and its
+% sentence is stale; v86 acted on it and moved the acknowledgement into an 8pt title-page footnote.)
+% The acknowledgement is here in full; the ethics statement sits at the end of page 4 instead,
+% because page 5 cannot hold both it and the 37 references. Pages 1-4 may carry it -- the 5th-page
+% rule restricts what may appear THERE, not where these statements are allowed to live.
+\section{Acknowledgements}
+% The author's standing acknowledgement text, verbatim and unchanged since v72 -- both IITP project
+% titles included. Do not paraphrase or shorten it to win page-5 lines; take those from \itemsep
+% and \parsep in the wrapper instead (v86 shortened this text and should not have).
+This work was supported by the Institute of Information \& Communications Technology Planning \& Evaluation (IITP) grant funded by the Korea government (MSIT) (No.~RS-2024-00438027, Development of an intelligent security and risk response system based on multi-modal data integration analysis), and by the IITP under the Artificial Intelligence Innovation Human Resources Development grant (IITP-RS-2026-25547954) funded by the Korea government (MSIT).
+
+\bibliographystyle{IEEEbib}
+\bibliography{refs_v13}

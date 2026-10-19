@@ -1,0 +1,276 @@
+% References for the confidence-interface paper.
+%
+% Provenance. Every entry below was checked against the arXiv API (id_list query, title and
+% author list read back) on 2026-08-14. Entries that previously carried placeholder authors
+% ({ALME authors}, {GACL authors}, "and others") now carry the real lists. Works are cited as
+% preprints unless the venue was confirmed; a confirmed venue is never assumed from a title.
+%
+% Changes from refs_v5.bib:
+%   qwen3omni       arXiv ID added (2509.17765) -- v5 had a bare "arXiv preprint"
+%   kim2024avhbench title corrected: "Audio-Visual Large Language Models"
+%   phi4mm          full title restored, so it is visibly the report covering Phi-4-multimodal
+%   alme2026        real author (Billa)                 -- was {ALME authors}
+%   gacl2026        real author list (Gao et al.)       -- was {GACL authors}
+%   wang2025mcrbench real author list                   -- was "Wang, Cheng and others"
+%   six new entries: the video-sycophancy and authority-bias literature Sec. 2 leaned on
+%   without citing.
+
+@article{qwen25omni,
+  title={{Qwen2.5-Omni} Technical Report},
+  author={Xu, Jin and others},
+  journal={arXiv preprint arXiv:2503.20215},
+  year={2025}
+}
+
+@article{qwen3omni,
+  title={{Qwen3-Omni} Technical Report},
+  author={Xu, Jin and others},
+  journal={arXiv preprint arXiv:2509.17765},
+  year={2025}
+}
+
+@article{cheng2024videollama2,
+  title={{VideoLLaMA} 2: Advancing Spatial-Temporal Modeling and Audio Understanding in
+         Video-{LLM}s},
+  author={Cheng, Zesen and others},
+  journal={arXiv preprint arXiv:2406.07476},
+  year={2024}
+}
+
+@inproceedings{chen2020vggsound,
+  title={{VGGSound}: A Large-Scale Audio-Visual Dataset},
+  author={Chen, Honglie and others},
+  booktitle={ICASSP},
+  year={2020}
+}
+
+@inproceedings{kim2024avhbench,
+  title={{AVHBench}: A Cross-Modal Hallucination Benchmark for Audio-Visual Large
+         Language Models},
+  author={Kim, Sung-Bin and others},
+  booktitle={ICLR},
+  year={2025}
+}
+
+@inproceedings{jung2025avcd,
+  title={{AVCD}: Mitigating Hallucinations in Audio-Visual Large Language Models through
+         Contrastive Decoding},
+  author={Chaeyoung Jung and others},
+  booktitle={NeurIPS},
+  year={2025}
+}
+
+@inproceedings{leng2024vcd,
+  title={Mitigating Object Hallucinations in Large Vision-Language Models through Visual
+         Contrastive Decoding},
+  author={Leng, Sicong and others},
+  booktitle={CVPR},
+  year={2024}
+}
+
+@article{dong2026omnihallucl,
+  title={{OmniHalluc-L}: Counterfactual Benchmarking and Modality-Perturbation Reliability Calibration for Long-Form Omni Hallucination},
+  author={Dong, Zixuan and others},
+  journal={arXiv preprint arXiv:2606.03614},
+  year={2026}
+}
+
+@article{chen2026avid,
+  title={{AVID}: A Benchmark for Omni-Modal Audio-Visual Inconsistency Understanding via
+         Agent-Driven Construction},
+  author={Chen, Zixuan and others},
+  journal={arXiv preprint arXiv:2604.13593},
+  year={2026}
+}
+
+@article{miller2026paralinguistic,
+  title={Do Audio Language Models Use Paralinguistic Evidence? {C}ounterfactual Audits for Response Evaluation},
+  author={Kevin Miller and others},
+  journal={arXiv preprint arXiv:2608.06718},
+  year={2026}
+}
+
+@inproceedings{wang2026avibench,
+  title={{AVI-Bench}: Toward Human-like Audio-Visual Intelligence of Omni-{MLLM}s},
+  author={Wang, Yaoting and others},
+  booktitle={ICML},
+  year={2026}
+}
+
+@inproceedings{wang2025mcrbench,
+  title={When Audio and Text Disagree: Revealing Text Bias in Large Audio-Language Models},
+  author={Wang, Cheng and others},
+  booktitle={EMNLP},
+  year={2025}
+}
+
+@article{alme2026,
+  title={When Audio-{LLM}s Don't Listen: A Cross-Linguistic Study of Modality Arbitration},
+  author={Billa, Jayadev},
+  journal={arXiv preprint arXiv:2602.11488},
+  year={2026}
+}
+
+@article{gacl2026,
+  title={Beyond Text Following: Repairable Arbitration Reversals in Audio-Language Models},
+  author={Gao, Yichen and others},
+  journal={arXiv preprint arXiv:2606.05161},
+  year={2026}
+}
+
+@inproceedings{chen2025listen,
+  title={Do Audio {LLM}s Really {LISTEN}, or Just Transcribe? {M}easuring Lexical vs.
+         Acoustic Emotion Cues Reliance},
+  author={Chen, Jingyi and others},
+  booktitle={EACL},
+  year={2026}
+}
+
+% --- video sycophancy and authority bias: the neighbourhood Sec. 2 sits in ----------------
+
+@inproceedings{zhou2025flattery,
+  title={Flattery in Motion: Benchmarking and Analyzing Sycophancy in Video-{LLM}s},
+  author={Zhou, Wenrui and others},
+  booktitle={ACL},
+  year={2026}
+}
+
+@article{cao2026caved,
+  title={Caved or Convinced: Temporal Sampling Gates Claim Deference in Video Large
+         Language Models},
+  author={Yuxin Cao and others},
+  journal={arXiv preprint arXiv:2608.03160},
+  year={2026}
+}
+
+@inproceedings{tang2026spatiotemporal,
+  title={Spatiotemporal Sycophancy: Negation-Based Gaslighting in Video Large
+         Language Models},
+  author={Tang, Ziyao and others},
+  booktitle={Findings of ACL},
+  year={2026}
+}
+
+@article{mammen2026endorsed,
+  title={Who Endorsed It? {M}easuring Authority Bias Across Expertise Levels in
+         Language Models},
+  author={Mammen, Priyanka Mary and others},
+  journal={arXiv preprint arXiv:2601.13433},
+  year={2026}
+}
+
+@article{joswin2026mechanistic,
+  title={A Mechanistic View of Authority Hierarchy in {LLM} Sycophancy},
+  author={Joswin, Emil and others},
+  journal={arXiv preprint arXiv:2607.00415},
+  year={2026}
+}
+
+@inproceedings{li2025vlmsycophancy,
+  author={Li, Shuo and others},
+  title={Have the {VLM}s Lost Confidence? {A} Study of
+         Sycophancy in {VLM}s},
+  booktitle={ICLR},
+  year={2025}
+}
+
+@article{qwen2audio,
+  title={{Qwen2-Audio} Technical Report},
+  author={Chu, Yunfei and others},
+  journal={arXiv preprint arXiv:2407.10759},
+  year={2024}
+}
+
+@article{af3,
+  title={{Audio Flamingo 3}: Advancing Audio Intelligence with Fully Open Large Audio
+         Language Models},
+  author={Goel, Arushi and others},
+  journal={arXiv preprint arXiv:2507.08128},
+  year={2025}
+}
+
+@article{phi4mm,
+  title={{Phi-4-Mini} Technical Report: Compact yet Powerful Multimodal Language Models
+         via Mixture-of-{LoRA}s},
+  author={{Microsoft}},
+  journal={arXiv preprint arXiv:2503.01743},
+  year={2025}
+}
+
+% --- added for v8: the closest text-only precedent, and the independent backbone ------------
+@inproceedings{sicilia2025sycophancy,
+  title={Accounting for Sycophancy in Language Model Uncertainty Estimation},
+  author={Anthony Sicilia and others},
+  booktitle={Findings of NAACL},
+  year={2025}
+}
+
+@article{guo2026conformity,
+  title={It's Not Always Sycophancy: Measuring {LLM} Conformity as a Function of Epistemic Uncertainty},
+  author={Guo, Kevin H. and others},
+  journal={arXiv preprint arXiv:2605.27288},
+  year={2026}
+}
+
+@article{nvidia2026nemotronomni,
+  title={{Nemotron 3 Nano Omni}: Efficient and Open Multimodal Intelligence},
+  author={{NVIDIA}},
+  journal={arXiv preprint arXiv:2604.24954},
+  year={2026}
+}
+
+@inproceedings{gong2021ast,
+  title={{AST}: Audio Spectrogram Transformer},
+  author={Gong, Yuan and others},
+  booktitle={Interspeech},
+  year={2021}
+}
+
+@inproceedings{clap2023,
+  title={Large-Scale Contrastive Language-Audio Pretraining with Feature Fusion and
+         Keyword-to-Caption Augmentation},
+  author={Wu, Yusong and others},
+  booktitle={ICASSP},
+  year={2023}
+}
+
+@article{yao2026syaudio,
+  title={Hearing is Believing? {Evaluating} and Analyzing Audio Language Model
+         Sycophancy with {SYAUDIO}},
+  author={Yao, Junchi and others},
+  journal={arXiv preprint arXiv:2601.23149},
+  year={2026}
+}
+
+@article{xiong2026deaf,
+  title={{DEAF}: A Benchmark for Diagnostic Evaluation of Acoustic Faithfulness
+         in Audio Language Models},
+  author={Xiong, Jiaqi and others},
+  journal={arXiv preprint arXiv:2603.18048},
+  year={2026}
+}
+
+@article{lin2022teaching,
+  author  = {Stephanie Lin and Jacob Hilton and Owain Evans},
+  title   = {Teaching models to express their uncertainty in words},
+  journal = {Transactions on Machine Learning Research},
+  year    = {2022}}
+
+@inproceedings{tian2023just,
+  author    = {Katherine Tian and others},
+  title     = {Just ask for calibration: Strategies for eliciting calibrated confidence scores from language models fine-tuned with human feedback},
+  booktitle = {EMNLP},
+  year      = {2023}}
+
+@inproceedings{zhou2023navigating,
+  author    = {Kaitlyn Zhou and Dan Jurafsky and Tatsunori Hashimoto},
+  title     = {Navigating the grey area: How expressions of uncertainty and overconfidence affect language models},
+  booktitle = {EMNLP},
+  year      = {2023}}
+
+@inproceedings{ghosh2024gama,
+  title={{GAMA}: A Large Audio-Language Model with Advanced Audio Understanding and Complex Reasoning Abilities},
+  author={Ghosh, Sreyan and others},
+  booktitle={EMNLP},
+  year={2024}
+}
