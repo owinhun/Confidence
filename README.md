@@ -12,5 +12,6 @@ The previous complete manuscript snapshot is [`paper/archive/icassp_body_confide
 
 - `paper/source/`: newest identified source package (18 September 2026)
 - `paper/archive/`: preceding v89 manuscript snapshot
+- `code/scripts/`: experiment, analysis, figure-generation, and launch scripts from the research workspace (Python and shell)
 
-Experimental datasets and model outputs are not included. Keep those in their approved storage and add reproducibility instructions before publishing any derived artifacts.
+The scripts are preserved as research source; many refer to the original `/workspace/svhalluc` layout and need path edits to run elsewhere. Python environments, model weights, datasets, and generated model outputs are not included. Each script's imports and command-line arguments describe its immediate requirements; a fully pinned environment and end-to-end reproduction guide still need to be prepared.
