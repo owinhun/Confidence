@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > **ICASSP 2027 submission — under review.** This work has **not** been announced as accepted.
 
-**[Project Page](https://owinhun.github.io/Confidence/)** · **[Manuscript PDF](./paper/archive/Confidence_v89.pdf)**
+**[Project Page](https://owinhun.github.io/Confidence/proj/proj.html)** · **[Manuscript PDF](./paper/archive/Confidence_v89.pdf)**
 
 **Seunghun Oh\* · Jaehong Myung\* · Unsang Park†**  
 \* Equal contribution · † Corresponding author  
