@@ -1,102 +1,93 @@
-# What an Upstream Sound-Event Tag Costs, and Which Part of It: Claim, Packaging, and Declared Confidence
+# What an Upstream Sound-Event Tag Costs: Claim, Packaging, and Declared Confidence
 
 > [!IMPORTANT]
-> **ICASSP 2027 submission — under review.** This work has **not** been announced as accepted.
+> **Submitted to ICASSP 2027 — under review.** This manuscript has not been announced as accepted or published.
 
-**[Project Page](https://owinhun.github.io/Confidence/proj/proj.html)** · **[Manuscript PDF](./paper/archive/Confidence_v89.pdf)**
+**[Project Page](https://owinhun.github.io/Confidence/proj/proj.html)** · **[Manuscript Source](./paper/source/Template.tex)** · **[Research Scripts](./code/scripts/)**
 
-**Seunghun Oh\* · Jaehong Myung\* · Unsang Park†**  
-\* Equal contribution · † Corresponding author  
-Department of Artificial Intelligence / Department of Computer Science and Engineering, Sogang University
+**Seunghun Oh · Hyunjung Chung · Ganghyeon Jeong · Unsang Park**  
+Department of Artificial Intelligence / Department of Computer Science and Engineering, Sogang University  
+Corresponding author: Unsang Park
 
-This repository contains research materials for **What an Upstream Sound-Event Tag Costs, and Which Part of It: Claim, Packaging, and Declared Confidence**, a diagnostic study of how an upstream sound-event detector's textual message influences downstream audio and audio–visual language models. We separate the **claim itself**, the **way the message is packaged**, and **declared confidence**. This is an evaluation and analysis study, not a new detector or an inference-time method guaranteed to improve performance.
+This repository contains research materials for **What an Upstream Sound-Event Tag Costs: Claim, Packaging, and Declared Confidence**, a diagnostic study of how a detector's textual message affects downstream audio and audio–visual language models. We examine **the claim itself**, **declared confidence**, and **message packaging** under controlled interventions, then test their effects in a real sound-event detection cascade. The work is an evaluation study, not a new detector or a universally effective prompt.
 
 ## Overview
 
-In a cascaded audio or audio–visual system, a detector may first label an event and pass its decision to a language model as text. That text can help, but it can also conflict with the recording. A single comparison between “with tag” and “without tag” does not reveal which part of the message produces the effect.
+A sound-event detector may identify an event and pass that decision to a multimodal model as natural language. When the detector is wrong, the transmitted text can conflict with the recording. A single comparison between using and omitting the tag does not tell us which part of the message caused the change.
 
-We examine three components:
+We distinguish three components:
 
-| Component | Example / intervention | Diagnostic question |
+| Component | Controlled comparison | Diagnostic question |
 | --- | --- | --- |
-| **Claim** | `Claim: "The clip does not contain the sound of X."` | What happens when the upstream stage makes a true or false assertion? |
-| **Declared confidence** | Change the field label from `Priority: high` to `Confidence: high`, while keeping the claim and graded value fixed. | Does an *epistemic* confidence field matter beyond a generic graded field? |
-| **Packaging** | Present the tag as a bare sentence or in a structured Source/Claim/Confidence block. | How does the bundled message format change the influence of the claim? |
+| **Claim** | Add a true or false assertion while preserving the recording and question. | What is the cost of forwarding the detector's decision? |
+| **Declared confidence** | Compare `Priority: high` and `Confidence: high` with the same claim and graded value. | Does the *epistemic meaning* of a confidence field change model behavior? |
+| **Packaging** | Compare a bare claim with a structured `Source / Claim / Confidence` block. | How strongly does the bundled message format amplify or attenuate a claim? |
 
-Importantly, **claim insertion** and the **Confidence-versus-Priority field-name change** are single-factor comparisons. The packaging comparison changes a bundle of message properties and is interpreted as a measured format effect, **not** as the isolated causal effect of any one formatting feature.
+Claim insertion and changing `Priority` to `Confidence` are single-factor comparisons. **Packaging changes several presentation features together**; its measured effect is not attributed to one isolated formatting choice.
 
 ## Method
 
-1. **Prepare controlled examples.** Evaluate sound events drawn from 12 VGGSound classes, alongside constructed colour, noise, and silence attributes. The protocol keeps the relevant recording and question fixed when comparing message interventions.
-2. **Screen perceptual eligibility.** Before evaluating metadata effects, use no-metadata accuracy and both answer-order recalls to identify cells where a model can reliably judge the property. Report excluded and sensitivity-only cells separately.
-3. **Intervene on one component at a time.** Compare signal-only, empty-block, source-only, non-epistemic `Priority`, and declared `Confidence` conditions. Keep the claim wording identical across claim-bearing conditions; sweep verbal confidence levels from very low to very high and examine a numeric scale.
-4. **Measure paired responses.** Read deterministic yes/no option-letter logits and examine accuracy, probability of override (POR), truth-aligned margins, and claim-aligned and symmetric contrasts (β and α). Use source-clustered bootstrap intervals, paired tests, and answer-order audits as defined in the manuscript.
-5. **Test a real cascade.** Calibrate CLAP-based sound-event tags, forward actual detector decisions with alternative serializations, compare with omitting the tag, and examine error-repair and break-even analyses. The findings are conditional on the tested readers, detector, data and serialization.
+1. **Construct matched questions.** Evaluate sound events from 12 VGGSound classes alongside diagnostic colour, noise and silence attributes. Keep the recording, target property, and question fixed within a matched comparison.
+2. **Check perceptual eligibility.** Use no-metadata accuracy and two-direction recall to identify model–attribute settings in which the reader can reliably assess the underlying signal. Audit answer-option order separately.
+3. **Control the message.** Compare signal-only, empty-block, source-only, claim-bearing `Priority`, and `Confidence` conditions. Preserve the claim wording across claim-bearing conditions and vary declared confidence from very low to very high, including a numeric representation.
+4. **Measure paired behavior.** Use deterministic option-letter logits, accuracy, probability of override (POR), truth-aligned margins, and the claim-aligned contrast β. Report source-clustered bootstrap uncertainty and paired tests, with appropriate distinctions between headline and sensitivity analyses.
+5. **Evaluate a real cascade.** Calibrate CLAP-based sound-event decisions, compare forwarding and omitting the resulting tag, and examine serialization, detector improvement, error repair and reader-specific break-even thresholds.
 
-Six evaluated reader models are **Qwen2.5-Omni-7B, Qwen3-Omni-30B-A3B, VideoLLaMA2.1-7B-AV, Qwen2-Audio-7B, Audio Flamingo 3, and Nemotron 3 Nano Omni**. Not all model–attribute cells qualify for every headline analysis; order-robust and sensitivity-only results are separated in the paper.
+The study evaluates six reader models: **Qwen2.5-Omni-7B, Qwen3-Omni-30B-A3B, VideoLLaMA2.1-7B-AV, Qwen2-Audio-7B, Audio Flamingo 3, and Nemotron 3 Nano Omni**. The paper distinguishes order-robust settings from sensitivity-only cases; not every comparison includes every model–attribute pair.
 
-## Key Findings (v89 manuscript)
+## Key Findings
 
-- **The claim is the largest source of change.** In the controlled condition walk, inserting a false claim is a larger margin step than subsequently naming its confidence in most reported ladder cells.
-- **The confidence label matters.** Relative to the non-epistemic `Priority` control, the `Confidence` field yields approximately **2.1–3.9×** the high-to-low claim-aligned margin swing across the 10 headline cells (order-averaged). This is a margin result; it should not be interpreted as a corresponding accuracy multiplier.
-- **Forwarding a real detector's tag can hurt.** In the CLAP cascade, bare textual forwarding reduces accuracy by **6.6–11.1 percentage points** in each of the **four order-robust** reader cells. Audio Flamingo 3 is reported separately as sensitivity-only, not included in that four-cell claim.
-- **Packaging moderates the effect.** A structured block attenuates the true-versus-false claim span relative to a bare sentence in the order-robust cascade cells. Because packaging is a bundle, the analysis does not attribute this solely to a single formatting element.
-- **The forwarding decision depends on relative accuracy.** Error-repair and break-even analyses show that improving the upstream stage can reverse the outcome for a reader; omission is not asserted to be universally optimal for every possible detector.
+- **The forwarded claim has the largest effect.** Adding a false claim produces a larger adverse margin change than the subsequent high-confidence field naming step in most tested comparisons.
+- **The field name matters beyond its numeric or graded value.** Naming the field `Confidence` rather than `Priority` produces a **2.1–3.9×** larger high-to-low claim-aligned margin swing in the headline comparisons. This is **not** an accuracy multiplier.
+- **Unconditional forwarding can be worse than omission.** In the real CLAP cascade, forwarding the detector's decisions as bare text reduces reader accuracy by **6.6–11.1 percentage points** in all **four order-robust** cascade settings. Audio Flamingo 3 is analyzed separately as order-sensitive.
+- **Packaging changes how much a claim is followed.** Structured Source/Claim blocks attenuate the true–false claim response gap relative to bare text in the order-robust cascade analyses; this is a bundled format effect.
+- **Detector quality changes the decision.** A stronger upstream detector can cross a model-specific break-even threshold. The appropriate forwarding policy depends on the detector, reader, input data and serialization.
 
-These summaries reflect the **archived v89 manuscript**. Check them against the **18 September 2026 source package** before treating them as final current-submission claims.
+These findings describe the tested diagnostic settings; they do not establish that tags should always be omitted or that confidence fields have one universal effect across multimodal systems.
 
-## Manuscript Versions
+## Manuscript and Reproduction
 
-| Version | Location | Status |
-| --- | --- | --- |
-| **18 September 2026 source package** | [`paper/source/`](./paper/source/) | Latest package identified in the repository description; build from `Template.tex`. |
-| **v89 manuscript (7 September 2026)** | [`paper/archive/icassp_body_confidence_v89.tex`](./paper/archive/icassp_body_confidence_v89.tex) · [`Confidence_v89.pdf`](./paper/archive/Confidence_v89.pdf) | Archived reproducible snapshot, **not** labelled as the latest submission. |
+The manuscript's LaTeX source, references and figures are available under [`paper/source/`](./paper/source/). Supporting experimental and analytical code is organized under [`code/scripts/`](./code/scripts/) and [`code/research_reports/`](./code/research_reports/).
 
-The attached v89 ZIP was built using `pdflatex Template`, `bibtex Template`, `pdflatex Template`, `pdflatex Template`. The newer source should be compiled and verified independently before publishing a current-version PDF.
-
-## Installation and Reproduction
-
-**Status: research scripts are available, but a fully portable, verified reproduction setup has not been released.** Some scripts depend on the original `/workspace/svhalluc` layout. Model checkpoints, datasets, cached generations and Python environments are not bundled with this repository.
+**Research scripts are available, but a portable, validated end-to-end reproduction environment is not yet provided.** Some scripts contain paths specific to the original research workspace; model checkpoints, datasets, generated outputs and pinned environments are not bundled.
 
 ```bash
 git clone https://github.com/owinhun/Confidence.git
 cd Confidence
 ```
 
-Relevant research material is organized under [`code/scripts/`](./code/scripts/) and [`code/research_reports/`](./code/research_reports/). The commands above only check out the repository; **they do not reproduce the experiments**. A pinned environment, data preparation instructions and validated end-to-end commands will be added if and when those resources are released.
+These commands download the repository; they are **not** a complete reproduction procedure.
 
 ## Release Status
 
-- [x] Manuscript source and archived v89 snapshot organized
+- [x] Manuscript LaTeX source and research materials available
 - [x] Research and analysis scripts preserved
-- [ ] Current-submission PDF compiled, verified and approved for public release
-- [ ] Project page published through GitHub Pages
-- [ ] Portable dependency / hardware specifications published
+- [x] Project Page HTML available in this repository
+- [ ] Public PDF matching the manuscript source uploaded as `paper.pdf`
+- [ ] Portable environment and dependency specifications published
 - [ ] Dataset and model-access instructions documented
 - [ ] End-to-end reproduction commands validated
 
 ## News
 
-- **September 2026** — Manuscript submitted to **ICASSP 2027**; review is ongoing. This is a submission announcement, **not** an acceptance announcement.
+- **ICASSP 2027** — Manuscript submitted; peer review is ongoing.
 
 ## Acknowledgements
 
-The following acknowledgement is transcribed from the **v89 manuscript**; verify its wording against the latest submitted version before final publication:
-
-> This work was supported by the Institute of Information & Communications Technology Planning & Evaluation (IITP) grant funded by the Korea government (MSIT) (No. RS-2024-00438027, Development of an intelligent security and risk response system based on multi-modal data integration analysis), and by the IITP under the Artificial Intelligence Innovation Human Resources Development grant (IITP-RS-2026-25547954) funded by the Korea government (MSIT).
+This work was supported by the Institute of Information & Communications Technology Planning & Evaluation (IITP) grant funded by the Korea government (MSIT) (No. RS-2024-00438027, Development of an intelligent security and risk response system based on multi-modal data integration analysis), and by the IITP under the Artificial Intelligence Innovation Human Resources Development grant (IITP-RS-2026-25547954) funded by the Korea government (MSIT). The authors declare no relevant conflicts of interest.
 
 ## Contact
 
-For research inquiries, please open an issue in this repository. Contact information can be added after confirming the preferred public address.
+For questions about this research, please open an issue in this repository.
 
 ## Citation
 
-The paper is **under review** and does not yet have an official proceedings citation. The following is a **provisional manuscript citation**, not an accepted-conference citation:
+This paper is **under review**. The following is a provisional manuscript citation, not a published conference proceedings entry.
 
 ```bibtex
-@unpublished{oh2026upstreamtag,
-  title  = {What an Upstream Sound-Event Tag Costs, and Which Part of It: Claim, Packaging, and Declared Confidence},
-  author = {Oh, Seunghun and Myung, Jaehong and Park, Unsang},
+@unpublished{oh2026soundeventtag,
+  title  = {What an Upstream Sound-Event Tag Costs: Claim, Packaging, and Declared Confidence},
+  author = {Oh, Seunghun and Chung, Hyunjung and Jeong, Ganghyeon and Park, Unsang},
   year   = {2026},
   note   = {Manuscript submitted to ICASSP 2027; under review}
 }
