@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > **Submitted to ICASSP 2027 — under review.** This manuscript has not been announced as accepted or published.
 
-**[Project Page](https://owinhun.github.io/Confidence/proj/proj.html)** · **[Manuscript Source](./paper/source/Template.tex)** · **[Research Scripts](./code/scripts/)**
+**[Project Page](https://owinhun.github.io/Confidence/proj/proj.html)** · **[Manuscript PDF](./paper.pdf)**
 
 **Seunghun Oh · Hyunjung Chung · Ganghyeon Jeong · Unsang Park**  
 Department of Artificial Intelligence / Department of Computer Science and Engineering, Sogang University  
